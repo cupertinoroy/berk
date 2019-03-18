@@ -6,8 +6,8 @@
   
   
 ### Initial Behavior : Cloning the Repo & Switching to your own branch:  
-    $ git clone git@github.com:cupertinoroy/homesteadprj.git  
-    $ cd homesteadprj  
+    $ git clone git@github.com:cupertinoroy/berk.git  
+    $ cd berk  
     $ git checkout -b ${your own branch name}  
     $ git add .  
     $ git commit -m "create **** branch"  
