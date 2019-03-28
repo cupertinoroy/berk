@@ -1,0 +1,54 @@
+빌드 환경 설정 
+  - PATH
+    toolchain이  /opt/toolchains/arm-linux-androideabi-4.9 설치하였다면 쉘의 환경 변수를 아래와 같이 설정...
+     $ vim ~/.bashrc
+      
+     export ANDROID_TOOLCHAIN_HOME=/opt/toolchains/arm-linux-androideabi-4.9
+     export PATH=$PATH/bin:$PATH
+
+  - TOOLCHAIN PREFIX
+    toolchain prefix를 설정해야 하는데 확인하는 방법은 아래와 같다.
+    $  ls /opt/toolchains/arm-linux-androideabi-4.9/bin/
+      ...      
+      arm-linux-androideabi-g++             
+      arm-linux-androideabi-gcc             
+      ...
+      arm-linux-androideabi-gcc에서   gcc 이전의 prefix가 TOOLCHAIN_PREFIX가 된다.
+      TOOLCHAIN_PREFIX도 환경 변수를 설정해줘야 한다
+
+     $ vim ~/.bashrc
+     # ANDROID_TOOLCHAIN     
+     export ANDROID_TOOLCHAIN_HOME=/opt/toolchains/arm-linux-androideabi-4.9
+     export PATH=$PATH/bin:$PATH
+     export TOOLCHAIN_PREFIX= 
+      
+
+      저장 후 
+
+     $ source ~/.bashrc
+     
+  
+LK 빌드
+  - lk bootloader source dir로 이동하여
+    $ make msm8916 EMMC_BOOT=1
+
+  - 빌드 완료되면 아래와 같은 메세지가 출력된다
+
+generating build-msm8916/system-onesegment.ld
+linking build-msm8916/lk
+generating image: build-msm8916/lk.bin
+   text	   data	    bss	    dec	    hex	filename
+ 299924	 211484	  68552	 579960	  8d978	build-msm8916/lk
+arm-linux-androideabi-objcopy -O binary build-msm8916/lk build-msm8916/lk.bin
+generating listing: build-msm8916/lk.lst
+generating listing: build-msm8916/lk.debug.lst
+generating symbols: build-msm8916/lk.sym
+generating size map: build-msm8916/lk.size
+generating stripped elf: build-msm8916/lk_s.elf
+cp -f ./build-msm8916/lk_s.elf ./build-msm8916/emmc_appsboot.mbn
+make[1]: 디렉터리 '/home/tome/project/lk' 나감
+
+
+
+  - 실제 lk bootloader 이미지 파일은 build-system/emmc_appsboot.mbn 생성된다
+    

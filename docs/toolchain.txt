@@ -1,0 +1,6 @@
+Toolchain 받는곳
+https://android.googlesource.com/platform/prebuilts/gcc/
+
+
+
+
