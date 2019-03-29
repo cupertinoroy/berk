@@ -1,0 +1,111 @@
+*** Configure adb  ***
+1. To configure adb, modify the USB driver by navigating to the following directory:
+    $ cd /etc/udev/rules.d/
+2. Enter the command:
+    $ sudo vi 50-android.rules
+  The result must be similar to the following output:
+
+#Sooner low-level bootloader
+SUBSYSTEM==”usb”, SYSFS{idVendor}==”18d1”, SYSFS{idProduct}==”d00d”,
+MODE=”0664”, GROUP=”plugdev”
+# adb composite interface device 9025
+SUBSYSTEM==”usb”, SYSFS{idVendor}==”05C6”, SYSFS{idProduct}==”9025”,
+MODE=”0664”, GROUP=”plugdev”
+
+3. After editing the file, to see the list of target devices connected to the Linux box, type:
+    $ lsusb
+
+
+ubuntu@ubuntu-P55-UD3R:~$ lsusb
+Bus 002 Device 002: ID 18d1:d00d Google Inc.                                  <-- Dragonboard
+Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 009 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 008 Device 002: ID 0a12:0001 Cambridge Silicon Radio, Ltd Bluetooth Dongle (HCI mode)
+Bus 008 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 007 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 006 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 005 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 004 Device 002: ID 0403:6001 Future Technology Devices International, Ltd FT232 USB-Serial (UART) IC
+Bus 004 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 003 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+
+
+4. After a build is complete, the adb and fastboot executables for Linux are located in the
+   linux_android_board_support_package_vla.br.1.2.7-01010-8x16.0-4/APQ8016_410C_LA.BR.1.2.7-01010-8x16.0_6.0.1_Marsh_Mallo_P2/out/host/linux-x86/bin
+ directory in the Android software release. If the
+   linux_android_board_support_package_vla.br.1.2.7-01010-8x16.0-4/APQ8016_410C_LA.BR.1.2.7-01010-8x16.0_6.0.1_Marsh_Mallo_P2/out/host/linux-x86/bin
+ directory is not in the executable search path, use the
+following steps to add it from $BUILDROOT (build directory).
+
+    or 
+    $ sudo apt install android-tools-adb android-tools-fastboot
+
+    just run sudo fastboot devices
+    $ ubuntu@ubuntu-P55-UD3R:~/dragon410c/work/linux_android_board_support_package_vla.br.1.2.7-01010-8x16.0-4/APQ8016_410C_LA.BR.1.2.7-01010-8x16.0_6.0.1_Marsh_Mallo_P2/out/host/linux-x86/bin$ sudo fastboot devices
+96e83cc8	fastboot
+
+
+
+a. Type the command:
+    $ source build/envsetup.sh
+
+b. Type the command:
+    $ lunch msm8916_64-userdebug
+
+NOTE:
+To run adb or fastboot, sudo or root access on the Linux machine may be required. This is a
+useful link for Linux and MAC OS to setup adb and fastboot (note that device ID “9025” is
+needed in 50-android.rules or 51-android.rules) : https://code.google.com/p/adb-fastboot-install/
+
+
+
+*** Program Android images using fastboot   ***
+
+1. Hold down the VOL- key, connect the DC supply to the DragonBoard 410c, and press the
+power ON button. Plug the USB cable into the target. This will bring the device into fastboot
+mode.
+
+2. Depending on your build environment, choose one of the following options
+a. From the Windows command shell, run:
+    fastboot devices
+
+b. From Linux:
+i. Navigate to the following directory:
+cd <$BUILDROOT>/linux_android_board_support_package_vla.br.1.2.7-01010-8x16.0-4/APQ8016_410C_LA.BR.1.2.7-01010-8x16.0_6.0.1_Marsh_Mallo_P2/out/host/linux-x86/bin
+
+ii. Run: sudo fastboot devices
+The list of registered devices is displayed.
+
+3. Once the device is detected, flash the binaries to the target. Run the following commands to
+flash all the android apps images:
+fastboot flash aboot <path to emmc_appsboot.mbn >
+fastboot flash boot <path to boot.img>
+fastboot flash system <path to system.img>
+fastboot flash userdata <path to userdata.img>
+fastboot flash persist <path to persist.img>
+fastboot flash recovery <path to recovery.img>
+
+    $ cd out/target/product/msm8916_64
+    $ sudo fastboot flash boot boot.img
+    $ sudo fastboot flash system system.img
+    $ sudo fastboot flash userdata userdata.img
+    $ sudo fastboot flash recovery recovery.img
+    $ sudo fastboot flash persist persist.img
+    $ sudo fastboot flash cache cache.img
+
+4. Reboot the board. During power up you should see USER LED #4 glowing green, indicating
+bootup sign of life.
+NOTE:
+M80-P0436-2 Rev J
+When re-flashing Android Images, the initial boot will take up to 3 minutes as Android initializes
+user space databases and files. This boot time will reduce to less than a minute on subsequent
+boots.
+
+
+
+- fastboot
+    https://www.96boards.org/documentation/consumer/dragonboard/dragonboard410c/installation/linux-fastboot.md.html
+
+- microsd
+    https://www.96boards.org/documentation/consumer/dragonboard/dragonboard410c/installation/linux-sd.md.html
