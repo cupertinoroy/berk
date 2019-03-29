@@ -27,8 +27,8 @@
     $ git checkout ${your branch}
     $ git merge dev
 
-### Update master branch  
-    $ git checkout master  
+### Update dev branch  
+    $ git checkout dev
     $ git merge --no-ff ${your branch}  
     $ git push    
   
